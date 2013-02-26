@@ -1,0 +1,58 @@
+﻿<Window x:Name="w_wd_1c_conf" x:Class="wd_1c_conf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="wd_1c_conf" Height="600" Width="900">
+    <Grid>
+        <TabControl HorizontalAlignment="Left" Height="253" Margin="10,10,0,0" VerticalAlignment="Top" Width="872">
+            <TabItem Header="Работа с data.dbf" Width="130" Height="35">
+                <Grid Background="#FFE5E5E5">
+                    <DockPanel LastChildFill="True" >
+                        <StackPanel Margin="10,10,10,10" VerticalAlignment="Top"  DockPanel.Dock="Top" Orientation="Horizontal">
+                            <Label Content="Папка обмена"/>
+                            <TextBox x:Name="txt_db_location" Text="c:\dbf\" Width="150"/>
+                            <Label Content="Папка обмена"/>
+                            <TextBox Width="150"/>
+                        </StackPanel>
+                        <StackPanel Margin="10,10,10,10" VerticalAlignment="Top" DockPanel.Dock="Left" Width="200px">
+                            <Button x:Name="btn_make_all" Content="Создать ВСЕ" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top" Click="btn_make_all_Click"/>
+                            <Button x:Name="btn_make_tab_good" Content="Создать good" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top" Click="btn_make_tab_good_Click"/>
+                            <Button x:Name="make_tab_goodcalc" Content="Создать good_calc" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top"/>
+                        </StackPanel>
+                        <StackPanel Margin="10,10,10,10" VerticalAlignment="Top" DockPanel.Dock="Left">
+                            <Button x:Name="btn_drop_all" Content="Дропнуть ВСЕ" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top" Click="btn_drop_all_Click"/>
+                            <Button x:Name="btn_drop_good" Content="Дропнуть good" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top" Click="btn_drop_good_Click"/>
+                            <Button x:Name="btn_drop_goodcalc" Content="Дропнуть good_calc" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Заполнение good" Width="130" Height="35">
+                <Grid Background="#FFE5E5E5">
+                    <DockPanel LastChildFill="True" HorizontalAlignment="Left" >
+                        <StackPanel Margin="10,10,10,10" VerticalAlignment="Top"  HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Vertical" Width="120">
+                            <Label Content="БД WinDraw"/>
+                            <TextBox x:Name="txt_server" HorizontalAlignment="Left" Height="23" Margin="3,3,3,3" TextWrapping="Wrap" Text="192.168.1.201" VerticalAlignment="Top" Width="120"/>
+                            <TextBox x:Name="txt_server_name" HorizontalAlignment="Left" Height="23" Margin="3,3,3,3" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <TextBox x:Name="txt_db_name" Text="ecad_venta" HorizontalAlignment="Left" Height="23" Margin="3,3,3,3" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <TextBox x:Name="txt_login" HorizontalAlignment="Left" Height="23" Margin="3,3,3,3" TextWrapping="Wrap" Text="sa" VerticalAlignment="Top" Width="120"/>
+                            <PasswordBox x:Name="txt_pass" Password="82757662=z" HorizontalAlignment="Left" Margin="3,3,3,3" VerticalAlignment="Top" Width="120"/>
+                            <Button Visibility="Hidden" x:Name="btn_connect" Content="Соединить" HorizontalAlignment="Right" Margin="3,3,3,3" VerticalAlignment="Top" Width="75" Height="22" Click="btn_connect_Click"/>
+                        </StackPanel>
+                        <StackPanel Margin="10,20,10,10" VerticalAlignment="Top" DockPanel.Dock="Left" Width="200px">
+                            <StackPanel Margin="10,30,10,10" Orientation="Horizontal">
+                                <Label Content="Count" />
+                                <TextBox x:Name="txt_cnt" Width="100" Text="100"/>
+                            </StackPanel>
+                            <Button x:Name="btn_fill_good" Content="Выгрузить good" HorizontalAlignment="Left" Margin="3,3,3,3" Padding="3,3,3,3" VerticalAlignment="Top" Click="btn_fill_good_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+                    
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <TextBox x:Name="txt_log" HorizontalAlignment="Left" Height="292" Margin="10,268,0,0" TextWrapping="Wrap" Text="Лог..." VerticalAlignment="Top" Width="872" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+
+    </Grid>
+</Window>
