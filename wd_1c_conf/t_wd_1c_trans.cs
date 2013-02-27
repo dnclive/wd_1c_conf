@@ -95,8 +95,10 @@ namespace wd_1c_conf
 					{"cmd_",				"CREATE TABLE [good] ( id int, marking varchar(100) )"},
 					{"cmd",		"CREATE TABLE [calc] "+
 								"( "+
-								"	id				int, "+
+								//"	id				int, "+
 								"	id_good			int, "+
+								"	marking			varchar(100)	NULL, "+
+								"	marking_id		varchar(100)	NULL, "+
 								"	qu				double NULL, "+
 								"	qu_store		double NULL, "+
 								"	idorder			int NULL, "+
@@ -238,7 +240,7 @@ namespace wd_1c_conf
 									{
 										oledb_cli.f_exec_cmd(args["dbf_db"].f_add(true, new t()
 										{
-				
+											{"conn_keep_open", true},
 											{"cmd",				query},
 											{"db_file_name",	"good"},
 											{
@@ -293,9 +295,11 @@ namespace wd_1c_conf
             {
 				{"conn_keep_open", true},
                 {"cmd",		"select "+
-							"	g.idgood, "+
+							"	g.idgood as id_good, "+
+							"	g.marking as marking, "+
+							"	g.extmarking as marking_id, "+
 							"	mc.qu, "+
-							"	mc.qustore, "+
+							"	mc.qustore as qu_store, "+
 							"	mc.idorder, "+
 							"	mc.idorderitem, "+
 							"	GETDATE() as dtcre, "+
@@ -308,10 +312,10 @@ namespace wd_1c_conf
 							"	left join manufactdocpos md_ps on md_ps.idorderitem=oi.idorderitem "+
 							"	left join manufactdoc md on md_ps.idmanufactdoc=md.idmanufactdoc "+
 							"where "+
-							"	o.name like 'б 345/12' or "+
-							"	o.idorder = 12312 or "+
-							"	md.name like 'б 123' or "+
-							"	md.idmanufactdoc=234234"
+							//"	o.name like 'б 345/12' or "+
+							"	o.idorder = 91964 "// or "+
+							//"	md.name like 'б 123' or "+
+							//"	md.idmanufactdoc=234234"
 				},
 				{"f_fail", args["f_fail"].f_f()},
 				{	//когда будет получена таблица
@@ -323,6 +327,7 @@ namespace wd_1c_conf
 						//формируем inset запрос для строк полученной таблицы
 						oledb_cli.f_make_ins_query(args["dbf_db"].f_add(true, new t()
 						{
+							{"conn_keep_open", true},
 							{"tab", tab},
 							{
 								"f_each", new t_f<t,t>(delegate(t args_2)
@@ -331,7 +336,7 @@ namespace wd_1c_conf
 
 									//MessageBox.Show(query);
 
-									//t.f_f("f_done", args.f_add(true, args_2));
+									//t.f_f("f_log", new t() { { "msg", query } });
 
 									//return null;
 

@@ -254,7 +254,7 @@ namespace wd_1c_conf
 
 		private void btn_calc_2_1c_Click(object sender, RoutedEventArgs e)
 		{
-			wd_1c_trans.f_good_wd_2_dbf(new t()
+			wd_1c_trans.f_calc_wd_2_dbf(new t()
 			{
 				{
 					"wd_db", new t()
@@ -304,16 +304,36 @@ namespace wd_1c_conf
 
 						return null;
 					})
-				}
+				},
+				{"f_log", new t_f<t,t>(f_log)}
 			});
 		}
 
 		#endregion заполнение таблиц
 
-		private void f_log()
-		{
+		#region служебное
 
+		private t f_fail(t args)
+		{
+			Exception ex = args["ex"].f_def_set(new Exception("ex не задан")).f_val<Exception>();
+
+			txt_log.Text = "\r\n\r\n"+ ex.Message + "\r\n";
+			txt_log.Text = args["message"].f_str() + "\r\n";
+
+			return null;
 		}
+
+
+		private t f_log(t args)
+		{
+			string msg = args["msg"].f_str();
+
+			txt_log.Text = "\r\n\r\n" + msg + "\r\n";
+
+			return null;
+		}
+
+		#endregion служебное
 
 		private void w_wd_1c_conf_MouseDown(object sender, MouseButtonEventArgs e)
 		{

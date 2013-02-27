@@ -45,11 +45,11 @@
                 </StackPanel>
             </Button>
 
-            <StackPanel 
+            <DockPanel 
                 Grid.Column="1" Grid.ColumnSpan="1"
                 Grid.Row="1" Grid.RowSpan="1"
-                Orientation="Vertical">
-                <TabControl Margin="0,0,0,0" BorderBrush="White" Background="White">
+                Margin="0" LastChildFill="True">
+                <TabControl Margin="0,0,0,0" BorderBrush="White" Background="White" DockPanel.Dock="Top">
                     <TabItem Header="1C---WD" Width="130" Height="35">
                         <Grid Background="White">
                             <DockPanel LastChildFill="True" >
@@ -98,7 +98,7 @@
                                 <DockPanel VerticalAlignment="Center" Margin="0">
                                     <StackPanel VerticalAlignment="Center" DockPanel.Dock="Top" Margin="10">
                                         <Label Content="Имя или id заказа" FontSize="20" />
-                                        <TextBox x:Name="txt_order_name_id"  Text="" FontSize="18"/>
+                                        <TextBox x:Name="txt_order_name_id"  Text="91964" FontSize="18"/>
                                     </StackPanel>
                                     <StackPanel VerticalAlignment="Center" DockPanel.Dock="Bottom" Margin="10">
                                         <Label Content="Имя или id задания" FontSize="20" />
@@ -115,10 +115,10 @@
                     </TabItem>
                 </TabControl>
                 <TextBox 
-            x:Name="txt_log" Margin="10,10,10,10" TextWrapping="Wrap" Text="Лог..."
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        x:Name="txt_log" Margin="10,10,10,10" TextWrapping="Wrap" Text="Лог..."
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
 
-            </StackPanel>
+            </DockPanel>
         </Grid>
     </Border>
 </Window>
