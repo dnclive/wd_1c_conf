@@ -95,7 +95,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\tlib\tlib.csproj">
+    <ProjectReference Include="..\..\tlib_sharp\tlib\tlib.csproj">
       <Project>{34281226-04dc-4efd-b765-4ae4acec101d}</Project>
       <Name>tlib</Name>
     </ProjectReference>
