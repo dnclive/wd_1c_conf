@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,21 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using tlib;
+using kibicom.tlib;
 
-namespace wd_1c_conf
+namespace kibicom.wd_1c_conf
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class main_win : Window
 	{
 
 		t_wd_1c_trans wd_1c_trans = new t_wd_1c_trans();
 
 		t args;
 
-		public MainWindow()
+		public main_win()
 		{
 			InitializeComponent();
 

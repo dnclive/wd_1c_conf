@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using tlib;
+//using System.Threading.Tasks;
+using kibicom.tlib;
 using System.Windows;
 using System.Data;
 
-namespace wd_1c_conf
+namespace kibicom.wd_1c_conf
 {
 	class t_wd_1c_trans : t
 	{
