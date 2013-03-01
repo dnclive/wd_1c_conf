@@ -9,7 +9,7 @@ using System.Data;
 
 namespace kibicom.wd_1c_conf
 {
-	class t_wd_1c_trans : t
+	public class t_wd_1c_trans : t
 	{
 
 		public t_oledb_cli f_oledb_cli(t args)
