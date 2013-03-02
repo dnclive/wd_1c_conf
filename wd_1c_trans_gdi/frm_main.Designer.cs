@@ -172,6 +172,7 @@
 			this.Name = "frm_main";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Выгрузка в 1С";
+			this.TopMost = true;
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frm_main_MouseDown);
 			this.ResumeLayout(false);
 			this.PerformLayout();

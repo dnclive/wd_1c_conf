@@ -7,6 +7,7 @@ using kibicom.tlib;
 using System.Windows;
 using System.Windows.Forms;
 using System.Data;
+using System.Data.OleDb;
 
 namespace kibicom.wd_1c_conf
 {
@@ -275,12 +276,85 @@ namespace kibicom.wd_1c_conf
 			return;
 		}
 
+		public void f_calc_wd_dbf_trans(t args)
+		{
+			f_drop_calc_in_dbf(new t().f_add(true, args).f_add(true, new t()
+			{
+				{
+					"f_done", new t_f<t,t>(delegate(t args_1)
+					{
+
+						f_calc_wd_2_dbf(new t().f_add(true, args).f_add(true, new t()
+						{
+							{
+								"f_done_", new t_f<t,t>(delegate(t args_2)
+								{
+
+						
+
+									return null;
+								})
+							},
+						}));
+
+						return null;
+					})
+
+
+				},
+				{
+					"f_fail", new t_f<t,t>(delegate(t args_1)
+					{
+
+						MessageBox.Show("fail");
+
+						return null;
+					})
+
+
+				},
+			}));
+		}
+
+		public void f_drop_calc_in_dbf(t args)
+		{
+			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
+
+			string id_name = args["dbf_db"]["id_name"].f_def("o.idorder").f_str();
+			string id_val = args["dbf_db"]["id"].f_def(0).f_str();
+
+			try
+			{
+				oledb_cli.f_exec_cmd(new t().f_add(true, args["dbf_db"].f_add(true, new t()
+				{
+				
+					{"cmd",				"delete from calc where " +id_name+" = "+id_val},
+					{"db_file_name",	"calc"},
+					{
+						"f_done_", new t_f<t,t>(delegate(t args_3)
+						{
+							oledb_cli["sql_conn"].f_val<OleDbConnection>().Close();
+							Console.WriteLine("done");
+
+							return null;
+						})
+					},
+					{"f_done", args["f_done"].f_f()},
+					{"f_fail", args["f_fail"].f_f()}
+				})));
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
+
 		//выгрузка данных goodcalc в dbf
 		public void f_calc_wd_2_dbf(t args)
 		{
 			t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
 
-			t_oledb_cli oledb_cli = f_oledb_cli(args["dbf_db"]);
+			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
 
 			//t_oledb_cli oledb_cli = this["oledb_cli"].f_def(new t_oledb_cli(args["dbf_db"])).f_val<t_oledb_cli>();
 
@@ -289,6 +363,9 @@ namespace kibicom.wd_1c_conf
 			string idorder = args["wd_db"]["idorder"].f_def(0).f_str();
 			string md_name = args["wd_db"]["md_name"].f_def("").f_str();
 			string idmanufactdoc = args["wd_db"]["idmanufactdoc"].f_def(0).f_str();
+
+			string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
+			string id_val = args["wd_db"]["id"].f_def(0).f_str();
 
 			//получаем список доступных бд для сервера
 			//и выполняем f_each если передана
@@ -313,8 +390,14 @@ namespace kibicom.wd_1c_conf
 							"	left join manufactdocpos md_ps on md_ps.idorderitem=oi.idorderitem "+
 							"	left join manufactdoc md on md_ps.idmanufactdoc=md.idmanufactdoc "+
 							"where "+
+							" o.deleted is null and "+
+							" mc.deleted is null and "+
+							" md.deleted is null and "+
+							" md_ps.deleted is null and "+
+							" oi.deleted is null and "+
+							id_name+" = "+ id_val
 							//"	o.name like 'б 345/12' or "+
-							"	o.idorder = 91964 "// or "+
+							//"	o.idorder = 91964 "// or "+
 							//"	md.name like 'б 123' or "+
 							//"	md.idmanufactdoc=234234"
 				},
@@ -355,7 +438,7 @@ namespace kibicom.wd_1c_conf
 										{
 				
 											{"cmd",				query},
-											{"db_file_name",	"good"},
+											{"db_file_name",	"calc"},
 											{
 												"f_done_", new t_f<t,t>(delegate(t args_3)
 												{

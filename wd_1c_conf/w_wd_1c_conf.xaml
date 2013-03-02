@@ -56,7 +56,7 @@
                                 <StackPanel Margin="10,10,10,10" VerticalAlignment="Top"  HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Папка обмена"/>
-                                        <TextBox x:Name="txt_db_location" Text="D:\BASE\trade\dbf" Width="150"/>
+                                        <TextBox x:Name="txt_db_location" Text="Z:\" Width="150"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <StackPanel Margin="10,10,10,10" VerticalAlignment="Top" DockPanel.Dock="Left" Width="200px">
