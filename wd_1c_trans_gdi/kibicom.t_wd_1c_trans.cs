@@ -105,6 +105,7 @@ namespace kibicom.wd_1c_conf
 								"	qu_store		double NULL, "+
 								"	idorder			int NULL, "+
 								"	idorderitem		int NULL, "+
+								"	idmanufact		int NULL, "+
 								"	dtcre			TimeStamp NULL, "+
 								"	store			varchar(100) NULL "+
 								")"
@@ -175,14 +176,14 @@ namespace kibicom.wd_1c_conf
 
 			//t_oledb_cli oledb_cli = this["oledb_cli"].f_def(new t_oledb_cli(args["dbf_db"])).f_val<t_oledb_cli>();
 
-			string cout = args["wd_db"]["count"].f_def("1000").f_str();
+			string count = args["wd_db"]["count"].f_def("1000000").f_str();
 
 			//получаем список доступных бд для сервера
 			//и выполняем f_each если передана
 			mssql_cli.f_select(args["wd_db"].f_add(true, new t()
             {
 				{"conn_keep_open", true},
-                {"cmd",			"select top "+cout+" "+
+                {"cmd",			"select "+(count==""?"":"top "+count)+" "+
 								"	idgood as id, "+
 								"	marking, "+
 								"	extmarking as marking_id, "+
@@ -223,6 +224,12 @@ namespace kibicom.wd_1c_conf
 					{
 						DataTable tab = args_1["tab"].f_val<DataTable>();
 
+						//количество строк результата
+						int row_cnt = tab.Rows.Count;
+
+						//текущая обрабатываемая строка
+						int i=0;
+
 						//формируем inset запрос для строк полученной таблицы
 						oledb_cli.f_make_ins_query(args["dbf_db"].f_add(true, new t()
 						{
@@ -235,6 +242,10 @@ namespace kibicom.wd_1c_conf
 									//MessageBox.Show(query);
 
 									//t.f_f("f_done", args.f_add(true, args_2));
+
+									i++;
+
+									t.f_f(args["f_progress"].f_f(), new t() { { "cnt", row_cnt}, {"index",  i} });
 
 									//return null;
 
@@ -306,7 +317,12 @@ namespace kibicom.wd_1c_conf
 					"f_fail", new t_f<t,t>(delegate(t args_1)
 					{
 
-						MessageBox.Show("fail");
+						string msg=args_1["message"].f_str();
+						Exception ex=args_1["ex"].f_def(new Exception("ex не задан")).f_val<Exception>();
+
+						MessageBox.Show(msg+"\r\n"+ex.Message+"\r\n"+((t)ex.Data["args"])["cmd_text"].f_str());
+
+						//MessageBox.Show("fail");
 
 						return null;
 					})
@@ -367,6 +383,9 @@ namespace kibicom.wd_1c_conf
 			string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
 			string id_val = args["wd_db"]["id"].f_def(0).f_str();
 
+			bool is_calc = args["dbf_db"]["is_calc"].f_def(true).f_val<bool>();
+			bool is_cancel = args["dbf_db"]["is_cancel"].f_def(false).f_val<bool>();
+
 			//получаем список доступных бд для сервера
 			//и выполняем f_each если передана
 			mssql_cli.f_select(args["wd_db"].f_add(true, new t()
@@ -376,10 +395,11 @@ namespace kibicom.wd_1c_conf
 							"	g.idgood as id_good, "+
 							"	g.marking as marking, "+
 							"	g.extmarking as marking_id, "+
-							"	mc.qu, "+
-							"	mc.qustore as qu_store, "+
+							(is_calc?"	mc.qu, ":"	-mc.qu as qu, ")+
+							(is_calc?"	mc.qustore as qu_store, ":"	-mc.qustore as qu_store, ")+
 							"	mc.idorder, "+
 							"	mc.idorderitem, "+
+							"	md.idmanufactdoc as idmanufact, "+
 							"	GETDATE() as dtcre, "+
 							"	'' as store "+
 							"from  "+
