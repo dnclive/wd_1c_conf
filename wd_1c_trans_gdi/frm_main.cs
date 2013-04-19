@@ -10,6 +10,7 @@ using kibicom.tlib;
 using kibicom.wd_1c_conf;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 
 namespace kibicom.wd_1c_trans_gdi
 {
@@ -23,6 +24,7 @@ namespace kibicom.wd_1c_trans_gdi
 
 		public frm_main()
 		{
+			//*******данный код вызывается при запуске проекта в студии, для отладки
 			InitializeComponent();
 
 			SqlConnection conn = new SqlConnection("Server=192.168.1.201;Database=ecad_venta;User Id=sa;Password=82757662=z;Connection Timeout=300");
@@ -35,12 +37,15 @@ namespace kibicom.wd_1c_trans_gdi
 
 			//принимаем переданное соединение
 			//args["conn"] = new t(conn);
+
+			//выгрузка расхода заказа
 			//args["id"] = new t(91964);
-			//args["wd_id_name"] = new t("o.idorder");
+			//args["wd_id_name"] = new t("idorder");
 			//args["dbf_id_name"] = new t("idorder");
 
+			//выгрузка расхода ПЗ
 			args["id"] = new t(3271);
-			args["wd_id_name"] = new t("md.idmanufactdoc");
+			args["wd_id_name"] = new t("idmanufact");
 			args["dbf_id_name"] = new t("idmanufact");
 
 			args["dbf_location"] = new t(@"Z:\");
@@ -62,6 +67,10 @@ namespace kibicom.wd_1c_trans_gdi
 		public frm_main(SqlConnection conn, string wd_id_name, string dbf_id_name, int id)
 		{
 			
+			//*******
+			//даный конструктор выполняется из WinDraw на production
+			//*******
+
 			InitializeComponent();
 
 			//принимаем переданное соединение
@@ -71,7 +80,7 @@ namespace kibicom.wd_1c_trans_gdi
 			args["dbf_id_name"] = new t(dbf_id_name);
 
 			//args["dbf_location"] = new t(@"Z:\");
-			args["dbf_location"] = new t(@"\\SERVER3\dbf");
+			args["dbf_location"] = new t(@"\\SERVER3\dbf\");
 			
 
 		}
@@ -148,7 +157,8 @@ namespace kibicom.wd_1c_trans_gdi
 			//удаляем таблицу calc
 			wd_1c_trans.f_drop_tab(new t()
 			{
-				{"location",		dbf_location},
+				{"location_",		dbf_location},
+				{"location",		"./"},
 				{"db_file_name",	""},
 				{"login",			"Admin"},
 				{"pass",			""},
@@ -176,11 +186,12 @@ namespace kibicom.wd_1c_trans_gdi
 					})
 				}
 			});
-						//создаем новую
-
+			
+			//создаем новую
 			wd_1c_trans.f_make_tab_calc(new t()
 			{
-				{"location",		dbf_location},
+				{"location_",		dbf_location},
+				{"location",		"./"},
 				{"db_file_name",	""},
 				{"login",			"Admin"},
 				{"pass",			""},
@@ -236,7 +247,8 @@ namespace kibicom.wd_1c_trans_gdi
 					{
 						//{"location",		@"\\SERVER3\dbf"},
 						//{"location",		@"C:\dbf"},
-						{"location",		dbf_location},
+						{"location_",		dbf_location},
+						{"location",		"./"},
 						//{"location",		@"Z:\"},
 						{"db_file_name",	""},
 						{"login",			"Admin"},
@@ -255,11 +267,17 @@ namespace kibicom.wd_1c_trans_gdi
 
 						//txt_log.Text += query;
 
-						lbl_success.Visible = true;
+						//MessageBox.Show("123");
+
+						wd_1c_trans.f_close_all(new t());
+
+						f_enable_face();
+
+						//lbl_success.Visible = true;
 
 						//и включаем все
-						btn_calc_2_1c.Enabled = true;
-						btn_cancel_calc_1c.Enabled = true;
+						//btn_calc_2_1c.Enabled = true;
+						//btn_cancel_calc_1c.Enabled = true;
 
 						return null;
 					})
@@ -297,8 +315,23 @@ namespace kibicom.wd_1c_trans_gdi
 				}
 			});
 
+			//удаляем файл если уже есть
+			if (File.Exists(dbf_location + "calc.dbf"))
+			{
+				File.Delete(dbf_location + "calc.dbf");
+			}
 
+			//перемещаем наполненный файл в сеть
+			File.Move("calc.dbf", dbf_location + "calc.dbf");
 
+			//удаляем файл если уже есть
+			if (File.Exists(dbf_location + "update"))
+			{
+				File.Delete(dbf_location + "update");
+			}
+
+			//создаем файл символизирующий обновление
+			File.Create(dbf_location + "update");
 
 		}
 
@@ -315,7 +348,8 @@ namespace kibicom.wd_1c_trans_gdi
 			//удаление good
 			wd_1c_trans.f_drop_tab(new t()
 			{
-				{"location",		dbf_location},
+				//{"location",		dbf_location},
+				{"location",		"./"},
 			    {"db_file_name",	""},
                 {"login",			"Admin"},
                 {"pass",			""},
@@ -347,7 +381,8 @@ namespace kibicom.wd_1c_trans_gdi
 			//создание good
 			wd_1c_trans.f_make_tab_good(new t()
 			{
-				{"location",		dbf_location},
+				//{"location",		dbf_location},
+				{"location",		"./"},
 			    {"db_file_name",	""},
                 {"login",			"Admin"},
                 {"pass",			""},
@@ -393,7 +428,8 @@ namespace kibicom.wd_1c_trans_gdi
 				{
 					"dbf_db", new t()
 					{
-						{"location",		dbf_location},
+						//{"location",		dbf_location},
+						{"location",		"./"},
 						{"db_file_name",	""},
 						{"login",			"Admin"},
 						{"pass",			""},
@@ -404,6 +440,10 @@ namespace kibicom.wd_1c_trans_gdi
 					"f_done", new t_f<t,t>(delegate(t args_1)
 					{
 						string query = args_1["query"].f_val<string>();
+
+						//MessageBox.Show("123");
+
+						wd_1c_trans.f_close_all(new t());
 
 						f_enable_face();
 
@@ -445,6 +485,25 @@ namespace kibicom.wd_1c_trans_gdi
 				}
 			});
 
+			//удаляем файл если уже есть
+			if (File.Exists(dbf_location + "good.dbf"))
+			{
+				File.Delete(dbf_location + "good.dbf");
+			}
+
+			//перемещаем наполненный файл в сеть
+			File.Move("good.dbf", dbf_location + "good.dbf");
+
+			//удаляем файл если уже есть
+			if (File.Exists(dbf_location + "update"))
+			{
+				File.Delete(dbf_location + "update");
+			}
+
+			//создаем файл символизирующий обновление
+			File.Create(dbf_location + "update");
+
+
 		}
 
 
@@ -474,6 +533,12 @@ namespace kibicom.wd_1c_trans_gdi
 			//выключаем кнопки что бы не щелкали пока не закончиться текущая операция
 			//lbl_counter.Text = "";
 			//lbl_success.Visible = false;
+
+			lbl_success.Visible = true;
+
+			//и включаем все
+			btn_calc_2_1c.Enabled = true;
+			btn_cancel_calc_1c.Enabled = true;
 
 			btn_Calc.Enabled = true;
 			btn_good.Enabled = true;

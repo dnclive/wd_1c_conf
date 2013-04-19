@@ -107,7 +107,8 @@ namespace kibicom.wd_1c_conf
 								"	idorderitem		int NULL, "+
 								"	idmanufact		int NULL, "+
 								"	dtcre			TimeStamp NULL, "+
-								"	store			varchar(100) NULL "+
+								"	store			varchar(100) NULL, "+
+								"	unit			varchar(100) NULL "+
 								")"
 					},
 					{
@@ -154,12 +155,21 @@ namespace kibicom.wd_1c_conf
 
 							return null;
 						})
+					},
+					{
+						"f_fail", new t_f<t,t>(delegate(t args_1)
+						{
+
+							//MessageBox.Show("123");
+
+							return null;
+						})
 					}
 				}));
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				MessageBox.Show(ex.Message+"\r\n"+ex.GetHashCode().ToString()+"\r\n"+ex.Data["code"].ToString());
 			}
 
 			return;
@@ -251,7 +261,7 @@ namespace kibicom.wd_1c_conf
 
 									try
 									{
-										oledb_cli.f_exec_cmd(args["dbf_db"].f_add(true, new t()
+										oledb_cli.f_exec_cmd(args["dbf_db"].f_dub_mix(true, new t()
 										{
 											{"conn_keep_open", true},
 											{"cmd",				query},
@@ -265,9 +275,8 @@ namespace kibicom.wd_1c_conf
 													return null;
 												})
 											},
-											{"f_done", args["f_done"].f_f()},
 											{"f_fail", args["f_fail"].f_f()}
-										}));
+										}).f_drop("f_done"));
 									}
 									catch (Exception ex)
 									{
@@ -276,7 +285,8 @@ namespace kibicom.wd_1c_conf
 
 									return null;
 								})
-							}
+							},
+							{"f_done", args["f_done"].f_f()}
 						}));
 
 						return null;
@@ -391,7 +401,7 @@ namespace kibicom.wd_1c_conf
 			mssql_cli.f_select(args["wd_db"].f_add(true, new t()
             {
 				{"conn_keep_open", true},
-                {"cmd",		"select "+
+                {"cmd_",		"select "+
 							"	g.idgood as id_good, "+
 							"	g.marking as marking, "+
 							"	g.extmarking as marking_id, "+
@@ -421,6 +431,7 @@ namespace kibicom.wd_1c_conf
 							//"	md.name like 'б 123' or "+
 							//"	md.idmanufactdoc=234234"
 				},
+				{"cmd",		"select * from view_1c_good_calc where "+id_name+" = "+ id_val},
 				{"f_fail", args["f_fail"].f_f()},
 				{	//когда будет получена таблица
 					"f_done", new t_f<t,t>(delegate(t args_1)
@@ -454,7 +465,7 @@ namespace kibicom.wd_1c_conf
 
 									try
 									{
-										oledb_cli.f_exec_cmd(new t().f_add(true, args["dbf_db"].f_add(true, new t()
+										oledb_cli.f_exec_cmd(args["dbf_db"].f_dub_mix(true, new t()
 										{
 				
 											{"cmd",				query},
@@ -468,8 +479,9 @@ namespace kibicom.wd_1c_conf
 													return null;
 												})
 											},
+											{"f_done", args["f_done"].f_f()},
 											{"f_fail", args["f_fail"].f_f()}
-										})).f_drop("f_done"));
+										}).f_drop("f_done"));
 									}
 									catch (Exception ex)
 									{
@@ -490,6 +502,15 @@ namespace kibicom.wd_1c_conf
 			return;
 		}
 
+		public void f_close_all(t args)
+		{
+			t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
+			t_oledb_cli oledb_cli = this["oledb_cli"].f_def(new t_oledb_cli()).f_val<t_oledb_cli>();
+
+			mssql_cli.f_dispose(new t());
+			oledb_cli.f_dispose(new t());
+
+		}
 
 	}
 }
