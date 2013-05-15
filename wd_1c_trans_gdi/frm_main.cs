@@ -192,7 +192,7 @@ namespace kibicom.wd_1c_trans_gdi
 			{
 				{"location_",		dbf_location},
 				{"location",		"./"},
-				{"db_file_name",	""},
+				{"db_file_name",	"calc"},
 				{"login",			"Admin"},
 				{"pass",			""},
 				{
@@ -211,7 +211,7 @@ namespace kibicom.wd_1c_trans_gdi
 						string msg=args_1["message"].f_str();
 						Exception ex=args_1["ex"].f_def(new Exception("ex не задан")).f_val<Exception>();
 
-						//MessageBox.Show(msg+"\r\n"+ex.Message);
+						MessageBox.Show(msg+"\r\n"+ex.Message);
 						//txt_log.Text += "\r\n" + msg + "\r\n" + ex.Message+"\r\n";
 
 						return null;
@@ -321,8 +321,11 @@ namespace kibicom.wd_1c_trans_gdi
 				File.Delete(dbf_location + "calc.dbf");
 			}
 
-			//перемещаем наполненный файл в сеть
-			File.Move("calc.dbf", dbf_location + "calc.dbf");
+			if (File.Exists("calc.dbf"))
+			{
+				//перемещаем наполненный файл в сеть
+				File.Move("calc.dbf", dbf_location + "calc.dbf");
+			}
 
 			//удаляем файл если уже есть
 			if (File.Exists(dbf_location + "update"))

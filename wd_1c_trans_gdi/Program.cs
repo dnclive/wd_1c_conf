@@ -14,7 +14,9 @@ namespace kibicom.wd_1c_trans_gdi
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new frm_main());
+			//Application.Run(new frm_main());
+			//Application.Run(new confirm_calc());
+			Application.Run(new frm_export_calc());
 		}
 	}
 }

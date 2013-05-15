@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{54F88C67-BD6E-414A-ADCE-F781EB15297B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>kibicom.wd_1c_trans_gdi</RootNamespace>
     <AssemblyName>kibicom.wd_1c_trans_gdi</AssemblyName>
@@ -50,6 +50,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="confirm_calc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="confirm_calc.Designer.cs">
+      <DependentUpon>confirm_calc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frm_export_calc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_export_calc.Designer.cs">
+      <DependentUpon>frm_export_calc.cs</DependentUpon>
+    </Compile>
     <Compile Include="frm_main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,6 +77,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>set.settings</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="confirm_calc.resx">
+      <DependentUpon>confirm_calc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_export_calc.resx">
+      <DependentUpon>frm_export_calc.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frm_main.resx">
       <DependentUpon>frm_main.cs</DependentUpon>
     </EmbeddedResource>
