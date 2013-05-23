@@ -9,6 +9,9 @@ using System.Windows.Forms;
 using System.Data;
 using System.Data.OleDb;
 
+using kibicom.tlib;
+using kibicom.tlib.data_store_cli;
+
 namespace kibicom.wd_1c_conf
 {
 	public class t_wd_1c_trans : t
@@ -563,6 +566,7 @@ namespace kibicom.wd_1c_conf
 
 		//подтверждение расхода
 		//выгрузка данных manuf в dbf
+		//*** рабочая функция
 		public void f_calc_wd_2_dbf_confirm(t args)
 		{
 			t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
@@ -590,36 +594,6 @@ namespace kibicom.wd_1c_conf
             {
 				{"conn_keep_open", true},
 				{"timeout", 600},
-                {"cmd_",		"select "+
-							"	g.idgood as id_good, "+
-							"	g.marking as marking, "+
-							"	g.extmarking as marking_id, "+
-							(is_calc?"	mc.qu, ":"	-mc.qu as qu, ")+
-							(is_calc?"	mc.qustore as qu_store, ":"	-mc.qustore as qu_store, ")+
-							"	mc.idorder, "+
-							"	mc.idorderitem, "+
-							"	md.idmanufactdoc as idmanufact, "+
-							"	GETDATE() as dtcre, "+
-							"	'' as store "+
-							"from  "+
-							"	modelcalc mc "+
-							"	left join good g on mc.idgood=g.idgood "+
-							"	left join orderitem oi on mc.idorderitem=oi.idorderitem "+
-							"	left join orders o on mc.idorder=o.idorder "+
-							"	left join manufactdocpos md_ps on md_ps.idorderitem=oi.idorderitem "+
-							"	left join manufactdoc md on md_ps.idmanufactdoc=md.idmanufactdoc "+
-							"where "+
-							" o.deleted is null and "+
-							" mc.deleted is null and "+
-							" md.deleted is null and "+
-							" md_ps.deleted is null and "+
-							" oi.deleted is null and "+
-							id_name+" = "+ id_val
-							//"	o.name like 'б 345/12' or "+
-							//"	o.idorder = 91964 "// or "+
-							//"	md.name like 'б 123' or "+
-							//"	md.idmanufactdoc=234234"
-				},
 				{"cmd",		"select * from view_1c_good_calc where "+id_name+ " in ( " + id_val + " ) "},
 				{"f_fail", args["f_fail"].f_f()},
 				{	//когда будет получена таблица
@@ -666,15 +640,6 @@ namespace kibicom.wd_1c_conf
 				
 											{"cmd",				query},
 											{"db_file_name",	tab_name},
-											{
-												"f_done_", new t_f<t,t>(delegate(t args_3)
-												{
-
-													Console.WriteLine("done");
-
-													return null;
-												})
-											},
 											{"f_done", args["f_done"].f_f()},
 											{"f_fail", args["f_fail"].f_f()}
 										}).f_drop("f_done"));
