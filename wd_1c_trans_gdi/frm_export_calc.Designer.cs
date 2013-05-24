@@ -39,6 +39,8 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.btn_cancel_calc = new System.Windows.Forms.Button();
 			this.lbl_manuf_name = new System.Windows.Forms.Label();
+			this.btn_laminat = new System.Windows.Forms.Button();
+			this.txt_order_name = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// btn_export_calc
@@ -141,7 +143,7 @@
 			// 
 			this.btn_cancel_calc.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.btn_cancel_calc.ForeColor = System.Drawing.Color.Red;
-			this.btn_cancel_calc.Location = new System.Drawing.Point(14, 257);
+			this.btn_cancel_calc.Location = new System.Drawing.Point(13, 360);
 			this.btn_cancel_calc.Margin = new System.Windows.Forms.Padding(4);
 			this.btn_cancel_calc.Name = "btn_cancel_calc";
 			this.btn_cancel_calc.Size = new System.Drawing.Size(378, 86);
@@ -159,11 +161,34 @@
 			this.lbl_manuf_name.Size = new System.Drawing.Size(0, 25);
 			this.lbl_manuf_name.TabIndex = 17;
 			// 
+			// btn_laminat
+			// 
+			this.btn_laminat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+			this.btn_laminat.Font = new System.Drawing.Font("Microsoft Sans Serif", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.btn_laminat.ForeColor = System.Drawing.Color.ForestGreen;
+			this.btn_laminat.Location = new System.Drawing.Point(13, 257);
+			this.btn_laminat.Margin = new System.Windows.Forms.Padding(4);
+			this.btn_laminat.Name = "btn_laminat";
+			this.btn_laminat.Size = new System.Drawing.Size(378, 91);
+			this.btn_laminat.TabIndex = 12;
+			this.btn_laminat.Text = "Выгрузить Ламинацию";
+			this.btn_laminat.UseVisualStyleBackColor = true;
+			this.btn_laminat.Click += new System.EventHandler(this.btn_laminat_Click);
+			// 
+			// txt_order_name
+			// 
+			this.txt_order_name.Location = new System.Drawing.Point(399, 257);
+			this.txt_order_name.Name = "txt_order_name";
+			this.txt_order_name.Size = new System.Drawing.Size(228, 22);
+			this.txt_order_name.TabIndex = 18;
+			// 
 			// frm_export_calc
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(406, 356);
+			this.ClientSize = new System.Drawing.Size(639, 464);
+			this.Controls.Add(this.txt_order_name);
 			this.Controls.Add(this.lbl_manuf_name);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.dt_to);
@@ -172,6 +197,7 @@
 			this.Controls.Add(this.rbtn_by_manufact);
 			this.Controls.Add(this.lbl_counter);
 			this.Controls.Add(this.btn_cancel_calc);
+			this.Controls.Add(this.btn_laminat);
 			this.Controls.Add(this.btn_export_calc);
 			this.Controls.Add(this.lbl_success);
 			this.Controls.Add(this.progress);
@@ -196,5 +222,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button btn_cancel_calc;
 		private System.Windows.Forms.Label lbl_manuf_name;
+		private System.Windows.Forms.Button btn_laminat;
+		private System.Windows.Forms.TextBox txt_order_name;
 	}
 }

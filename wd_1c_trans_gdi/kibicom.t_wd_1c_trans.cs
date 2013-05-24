@@ -583,6 +583,7 @@ namespace kibicom.wd_1c_conf
 
 			string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
 			string id_val = args["wd_db"]["id"].f_def(0).f_str();
+			string view_name = args["wd_db"]["view_name"].f_def("view_1c_good_calc").f_str();
 
 			bool is_calc = args["dbf_db"]["is_calc"].f_def(true).f_val<bool>();
 			bool is_cancel = args["dbf_db"]["is_cancel"].f_def(false).f_val<bool>();
@@ -594,13 +595,13 @@ namespace kibicom.wd_1c_conf
             {
 				{"conn_keep_open", true},
 				{"timeout", 600},
-				{"cmd",		"select * from view_1c_good_calc where "+id_name+ " in ( " + id_val + " ) "},
+				{"cmd",		"select * from "+view_name+" where "+id_name+ " in ( " + id_val + " ) "},
 				{"f_fail", args["f_fail"].f_f()},
 				{	//когда будет получена таблица
 					"f_done", new t_f<t,t>(delegate(t args_1)
 					{
 
-						string q = "select * from view_1c_good_calc where " + id_name + " in ( " + id_val + " ) ";
+						//string q = "select * from view_1c_good_calc where " + id_name + " in ( " + id_val + " ) ";
 
 						//MessageBox.Show(q);
 

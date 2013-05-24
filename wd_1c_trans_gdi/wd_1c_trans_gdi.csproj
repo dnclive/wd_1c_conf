@@ -36,6 +36,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="kibicom.tlib">
+      <HintPath>..\..\..\_net_build_\kibicom.tlib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -114,16 +117,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\tlib_sharp\tlib\kibicom.tlib.csproj">
-      <Project>{34281226-04dc-4efd-b765-4ae4acec101d}</Project>
-      <Name>kibicom.tlib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\wd_1c_conf\kibicom.wd_1c_conf.csproj">
       <Project>{99768b01-3f2e-4fc1-a36d-0566b48ecb8a}</Project>
       <Name>kibicom.wd_1c_conf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) D:\git\_net_build_\
+copy $(TargetPath) %25HOMEPATH%25\Documents\GitHub\_net_build_\
+copy $(TargetPath) %25HOMEPATH%25\Dropbox\_net_build_\</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
