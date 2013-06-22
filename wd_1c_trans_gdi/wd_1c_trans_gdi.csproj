@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{54F88C67-BD6E-414A-ADCE-F781EB15297B}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>kibicom.wd_1c_trans_gdi</RootNamespace>
     <AssemblyName>kibicom.wd_1c_trans_gdi</AssemblyName>
