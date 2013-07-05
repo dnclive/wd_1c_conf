@@ -29,6 +29,19 @@ namespace kibicom.wd_1c_conf
 			return this["oledb_cli"].f_val<t_oledb_cli>();
 		}
 
+		public t_msslq_cli f_mssql_cli(t args)
+		{
+			if (this["mssql_cli"].f_is_empty())
+			{
+				this["mssql_cli"] = new t_msslq_cli(args);
+			}
+
+			t.f_f("f_done", args);
+
+			return this["mssql_cli"].f_val<t_msslq_cli>();
+		}
+
+
 		#region создание/удаление таблиц
 
 		//***good
@@ -1025,27 +1038,205 @@ namespace kibicom.wd_1c_conf
 			return new t();
 		}
 
-		//выгрузка потребностей материалов
+		#region выгрузка потребностей материалов
+
+
+
+		public t f_wd_res_good_needs_out(t args)
+		{
+			//t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
+			t_msslq_cli mssql_cli = f_mssql_cli(new t().f_add(true, args["wd_db"]).f_drop("f_done"));
+			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
+
+			string count = args["wd_db"]["count"].f_def("10000000").f_str();
+			//string order_name = args["wd_db"]["order_name"].f_def("").f_str();
+			//string idorder = args["wd_db"]["idorder"].f_def(0).f_str();
+			//string md_name = args["wd_db"]["md_name"].f_def("").f_str();
+			//string idmanufactdoc = args["wd_db"]["idmanufactdoc"].f_def(0).f_str();
+
+			string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
+			string id_val = args["wd_db"]["id"].f_def(0).f_str();
+			string view_name = args["wd_db"]["res_view_name"].f_def("view_1c_res_good_needs").f_str();
+
+			string tab_name = args["dbf_db"]["tab_name"].f_def("calc").f_str();
+
+			mssql_cli.f_select(args["wd_db"].f_add(true, new t()
+            {
+				{"conn_keep_open", true},
+				{"timeout", 600},
+				{"cmd",		"select * from "+view_name+" where "+id_name+ " in ( " + id_val + " ) "},
+				{"f_fail", args["f_fail"].f_f()},
+				{	//когда будет получена таблица
+					"f_done", new t_f<t,t>(delegate(t args_1)
+					{
+
+						//string q = "select * from view_1c_good_calc where " + id_name + " in ( " + id_val + " ) ";
+
+						//MessageBox.Show(q);
+
+						//результат запроса
+						DataTable tab = args_1["tab"].f_val<DataTable>();
+						//MessageBox.Show(tab.Rows.Count.ToString());
+
+						//количество строк результата
+						int row_cnt = tab.Rows.Count;
+
+						//текущая обрабатываемая строка
+						int i=0;
+
+						//минусуем количество
+						foreach (DataRow dr in tab.Rows)
+						{
+							dr["qu"] = -(double)dr["qu"];
+						}
+
+						//если есть строки в tabres для текущего заказа
+						//значит ранее требования уже передавались в 1С и нужно их заминусовать
+						if (row_cnt>0)
+						{
+							//удаляем текущие сохраненные (старые) требования из WD tab_res
+							f_drop_good_needs_in_dbf(args.f_dub_mix(true,new t()
+							{
+								{"tab", tab},
+								{	//когда будет получена таблица
+									"f_done", new t_f<t,t>(delegate(t args_2)
+									{
+
+										mssql_cli.f_exec_cmd(new t()
+										{
+											{"cmd","update tabres set deleted=getdate() where idorder in ("+id_val+")"},
+											{	//когда будет получена таблица
+												"f_done", new t_f<t,t>(delegate(t args_3)
+												{
+
+													f_good_needs_2_dbf(args);
+
+													return new t();
+												})
+											}
+										});
+
+										return new t();
+									})
+								},
+								{	//когда будет получена таблица
+									"f_fail", new t_f<t,t>(delegate(t args_2)
+									{
+
+										MessageBox.Show("Не удалось удалить предыдущий расход в 1С");
+
+										return new t();
+									})
+								}
+							}));
+						}
+						else
+						{
+							f_good_needs_2_dbf(args);
+						}
+
+						return null;
+					})
+				}
+            }));
+
+			return new t();
+		}
+
+		public void f_drop_good_needs_in_dbf(t args)
+		{
+			//t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
+			t_msslq_cli mssql_cli = f_mssql_cli(new t().f_add(true, args["wd_db"]).f_drop("f_done"));
+			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
+
+			//string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
+			//string id_val = args["wd_db"]["id"].f_def(0).f_str();
+			//string view_name = args["wd_db"]["res_view_name"].f_def("view_1c_res_good_calc").f_str();
+
+			string tab_name = args["dbf_db"]["tab_name"].f_def("calc").f_str();
+
+			DataRow res_dr =args["res_dr"].f_val<DataRow>();
+			DataTable tab = args["tab"].f_val<DataTable>();
+
+			//формируем inset запрос для строк полученной таблицы
+			oledb_cli.f_make_ins_query(args["dbf_db"].f_add(true, new t()
+			{
+				{"conn_keep_open", true},
+				{"tab", tab},
+				//{"dr_arr", new DataRow[]{res_dr}}, 
+				{
+					"f_each", new t_f<t,t>(delegate(t args_2)
+					{
+						string query = args_2["query"].f_val<string>();
+
+						//MessageBox.Show(query);
+
+
+						//t.f_f(args["f_progress"].f_f(), new t() { { "cnt", row_cnt}, {"index",  i} });
+
+						//return null;
+
+						try
+						{
+							oledb_cli.f_exec_cmd(args["dbf_db"].f_dub_mix(true, new t()
+							{
+				
+								{"cmd",				query},
+								{"db_file_name",	tab_name},
+								{
+									"f_fail", new t_f<t,t>(delegate(t args_5)
+									{
+
+										//MessageBox.Show("Не удалось отменить расходв в 1С");
+
+										return new t();
+									})
+								},
+							}).f_drop("f_done").f_drop("f_fail"));
+
+						}
+						catch (Exception ex)
+						{
+							MessageBox.Show(ex.Message);
+						}
+
+						return new t();
+					})
+				},
+				{
+					"f_fail_", new t_f<t,t>(delegate(t args_2)
+					{
+						return new t();
+					})
+				},
+				{"f_fail", args["f_fail"].f_f()},
+				{"f_done", args["f_done"].f_f()},
+			}));
+
+
+			return;
+		}
+
 		public void f_good_needs_2_dbf(t args)
 		{
-			t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
-
+			//t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
+			t_msslq_cli mssql_cli = f_mssql_cli(new t().f_add(true, args["wd_db"]).f_drop("f_done"));
 			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
 
 			//t_oledb_cli oledb_cli = this["oledb_cli"].f_def(new t_oledb_cli(args["dbf_db"])).f_val<t_oledb_cli>();
 
 			string cout = args["wd_db"]["count"].f_def("1000").f_str();
-			string order_name = args["wd_db"]["order_name"].f_def("").f_str();
-			string idorder = args["wd_db"]["idorder"].f_def(0).f_str();
-			string md_name = args["wd_db"]["md_name"].f_def("").f_str();
-			string idmanufactdoc = args["wd_db"]["idmanufactdoc"].f_def(0).f_str();
+			//string order_name = args["wd_db"]["order_name"].f_def("").f_str();
+			//string idorder = args["wd_db"]["idorder"].f_def(0).f_str();
+			//string md_name = args["wd_db"]["md_name"].f_def("").f_str();
+			//string idmanufactdoc = args["wd_db"]["idmanufactdoc"].f_def(0).f_str();
 
 			string id_name = args["wd_db"]["id_name"].f_def("o.idorder").f_str();
 			string id_val = args["wd_db"]["id"].f_def(0).f_str();
-			string view_name = args["wd_db"]["view_name"].f_def("view_1c_good_calc").f_str();
+			string view_name = args["wd_db"]["good_needs_view_name"].f_def("view_1c_mc_good_needs").f_str();
 
-			bool is_calc = args["dbf_db"]["is_calc"].f_def(true).f_val<bool>();
-			bool is_cancel = args["dbf_db"]["is_cancel"].f_def(false).f_val<bool>();
+			//bool is_calc = args["dbf_db"]["is_calc"].f_def(true).f_val<bool>();
+			//bool is_cancel = args["dbf_db"]["is_cancel"].f_def(false).f_val<bool>();
 			string tab_name = args["dbf_db"]["tab_name"].f_def("calc").f_str();
 
 			//получаем список доступных бд для сервера
@@ -1087,10 +1278,7 @@ namespace kibicom.wd_1c_conf
 
 									//MessageBox.Show(query);
 
-									i++;
-
-									t.f_f(args["f_progress"].f_f(), new t() { { "cnt", row_cnt}, {"index",  i} });
-
+									
 									//return null;
 
 									try
@@ -1100,19 +1288,52 @@ namespace kibicom.wd_1c_conf
 				
 											{"cmd",				query},
 											{"db_file_name",	tab_name},
-											{"f_done", args["f_done"].f_f()},
-											{"f_fail", args["f_fail"].f_f()}
-										}).f_drop("f_done"));
+											{	//когда будет получена таблица
+												"f_done", new t_f<t,t>(delegate(t args_3)
+												{
+
+													f_store_2_wd_res_good_needs(new t()
+													{
+														{"mc_dr", tab.Rows[i]},
+														{"tab_res_name", "tabres"}
+													});
+
+													return new t();
+
+												})
+											},
+											{	//когда будет получена таблица
+												"f_fail", new t_f<t,t>(delegate(t args_3)
+												{
+
+													f_store_2_wd_res_good_needs(new t()
+													{
+														{"mc_dr", tab.Rows[i]},
+														{"tab_res_name", "tabres"}
+													});
+
+													return new t();
+
+												})
+											},
+											{"f_fail_", args["f_fail"].f_f()}
+										}));
 									}
 									catch (Exception ex)
 									{
 										MessageBox.Show(ex.Message);
 									}
 
+									i++;
+
+									t.f_f(args["f_progress"].f_f(), new t() { { "cnt", row_cnt}, {"index",  i} });
+
+
 									return new t();
 								})
 							},
 							{"f_done", args["f_done"].f_f()},
+
 						}));
 
 						return null;
@@ -1122,6 +1343,58 @@ namespace kibicom.wd_1c_conf
 
 			return;
 		}
+
+		public t f_store_2_wd_res_good_needs(t args)
+		{
+			//t_msslq_cli mssql_cli = this["mssql_cli"].f_def(new t_msslq_cli()).f_val<t_msslq_cli>();
+			t_msslq_cli mssql_cli = f_mssql_cli(new t().f_add(true, args["wd_db"]).f_drop("f_done"));
+			t_oledb_cli oledb_cli = f_oledb_cli(new t().f_add(true, args["dbf_db"]).f_drop("f_done"));
+
+			DataRow mc_dr = args["mc_dr"].f_val<DataRow>();
+
+			string tab_name = args["tab_res_name"].f_def("tabres").f_str();
+
+			int tabres_id = mssql_cli.f_exec_cmd(new t()
+			{
+				{"cmd" , "exec gen_id 'gen_"+tab_name+"'"}
+			})["res_cnt"].f_int();
+
+			mssql_cli.f_exec_cmd(new t()
+			{
+				{
+					"cmd",
+					"insert "+tab_name+" (id, idgood, marking, idorder, name, qu) values ("+
+					t_sql_builder.f_db_val(tabres_id)+","+
+					t_sql_builder.f_db_val(mc_dr, "id_good")+","+
+					t_sql_builder.f_db_val(mc_dr, "marking_id")+","+
+					t_sql_builder.f_db_val(mc_dr, "idorder")+","+
+					t_sql_builder.f_db_val("good_needs")+","+
+					t_sql_builder.f_db_val(mc_dr, "qu")+")"
+				},
+				{	//когда будет получена таблица
+					"f_done", new t_f<t,t>(delegate(t args_4)
+					{
+
+
+						return new t();
+					})
+				},
+				{	//когда будет получена таблица
+					"f_fail", new t_f<t,t>(delegate(t args_4)
+					{
+
+
+						return new t();
+					})
+				}
+
+			});
+
+
+			return new t();
+		}
+
+		#endregion выгрузка потребностей материалов
 
 		public void f_close_all(t args)
 		{

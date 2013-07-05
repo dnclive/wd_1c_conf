@@ -341,7 +341,6 @@ namespace kibicom.wd_1c_trans_gdi
 
 		}
 
-
 		private void f_disable_face()
 		{
 			//выключаем кнопки что бы не щелкали пока не закончиться текущая операция
@@ -1185,7 +1184,7 @@ namespace kibicom.wd_1c_trans_gdi
 			//MessageBox.Show("2");
 
 			//наполняем таблицу данными
-			wd_1c_trans.f_good_needs_2_dbf(new t()
+			wd_1c_trans.f_wd_res_good_needs_out(new t()
 			{
 				{
 					"wd_db", new t()
@@ -1200,7 +1199,9 @@ namespace kibicom.wd_1c_trans_gdi
 						{"order_name",				""},
 						{"id_name",					args["wd_id_name"].f_str()},
 						{"id",						id},
-						{"view_name",				"view_1c_good_needs"},
+						//{"view_name",				"view_1c_good_needs"},
+						{"good_needs_view_name",	"view_1c_mc_good_needs"},
+						{"res_view_name",			"view_1c_res_good_needs"},
 						{"md_name",					""},
 						{"idmanufactdoc",			""},
 						{"conn",					args["conn"].f_def(new SqlConnection())},
